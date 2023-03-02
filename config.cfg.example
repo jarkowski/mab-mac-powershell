@@ -1,0 +1,19 @@
+# Define variables for Active Directory
+# Rename this file to config.cfg after cahnging it to
+# match your environment.
+
+# Your FQDN windows AD domain
+domain = lab.domain.example
+
+# The OU that is used as the base for the RADIUS MAB accounts and groups
+radiusOU = OU=RADIUS,DC=lab,DC=domain,DC=example
+
+# The OU containing the groups (one group for each device type)
+groupsOU = OU=Groups,OU=RADIUS,DC=lab,DC=domain,DC=example
+
+# The OU containing an OU for each device type
+mabUserOU = OU=MAB-User,OU=RADIUS,DC=lab,DC=domain,DC=example
+
+# The group which is denied the right to log on locally. All MAB-MAC accounts
+# will be members of this group.
+mabDenyLogonGroup = CN=MAB-Deny-Logon,OU=RADIUS,DC=lab,DC=domain,DC=example
