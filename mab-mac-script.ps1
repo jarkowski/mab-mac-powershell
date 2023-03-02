@@ -43,7 +43,9 @@ if ($existingUser) {
     } else {
         Write-Host "User not deleted - No changes made."
     }
-} else {
+} 
+
+else {
     # User does not exist, create new user
     Write-Host "Creating new user for MAC address $mac"
     
