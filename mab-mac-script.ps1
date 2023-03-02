@@ -47,22 +47,6 @@ if ($existingUser) {
 
 else {
     
-    
-    # Clear screen
-
-Clear-Host
-
-# Get config from file
-
-$config = Get-Content ".\config.cfg" | ConvertFrom-StringData
-$domain = $config.domain
-$radiusOU = $config.radiusOU
-$groupsOU = $config.groupsOU
-$mabUserOU = $config.mabUserOU
-$mabDenyLogonGroup = $config.mabDenyLogonGroup
-
-
-
 
 # Check for available OUs below mabUserOU
 try {
@@ -71,9 +55,6 @@ $mabSubOUs = Get-ADOrganizationalUnit -SearchScope OneLevel -SearchBase "$mabUse
 Write-Host "Can't list child OUs."
 Exit 1
 }
-
-
-
 
 if ($mabSubOUs) {
     # Prompt user to select an OU to create the new user in
