@@ -52,7 +52,7 @@ else {
 
     # Check for available OUs below mabUserOU
     try {
-        $mabSubOUs = Get-ADOrganizationalUnit -SearchScope OneLevel -SearchBase "$mabUserOU" -Filter * | Select-Object Name, DistinguishedName
+        $mabSubOUs = Get-ADOrganizationalUnit -SearchScope OneLevel -SearchBase "$mabUserOU" -Filter * | Select-Object Name
     }
     catch {
         Write-Host "Can't list child OUs."
@@ -182,5 +182,11 @@ else {
     else {
         Write-Host "Test Failed: User $mac is a member of other groups in addition to $mabDenyLogonGroup"
     }
+
+    # Add the matching group. We use $selectedOU here, the OU the user
+    # entered, which should also work for group creating, as OU names
+    # and group names are the same
+    Add-ADGroupMember -Identity $selectedOU -Members $mac
+
 }
 Write-Host "End of script"
