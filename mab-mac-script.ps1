@@ -46,6 +46,57 @@ if ($existingUser) {
 } 
 
 else {
+    
+    
+    # Clear screen
+
+Clear-Host
+
+# Get config from file
+
+$config = Get-Content ".\config.cfg" | ConvertFrom-StringData
+$domain = $config.domain
+$radiusOU = $config.radiusOU
+$groupsOU = $config.groupsOU
+$mabUserOU = $config.mabUserOU
+$mabDenyLogonGroup = $config.mabDenyLogonGroup
+
+
+
+
+# Check for available OUs below mabUserOU
+try {
+$mabSubOUs = Get-ADOrganizationalUnit -SearchScope OneLevel -SearchBase "$mabUserOU" -Filter * | Select-Object Name, DistinguishedName
+} catch {
+Write-Host "Can't list child OUs."
+Exit 1
+}
+
+
+
+
+if ($mabSubOUs) {
+    # Prompt user to select an OU to create the new user in
+    Write-Host "The following sub OUs are available under $mabUserOU "
+    $mabSubOUs | Format-Table -AutoSize
+    do {
+        $selectedOU = Read-Host "Please enter the name of the sub OU to create the new user in"
+        if ($selectedOU -in $mabSubOUs.Name) {
+            $targetOU = "OU=" + $selectedOU + "," + $mabUserOU
+            break
+        } else {
+            Write-Host "Invalid selection. Please try again."
+        }
+    } while ($true)
+} else {
+    # No child OUs found under mabUserOU, exit script
+    Write-Host "No child OUs found under $mabUserOU. Exiting script."
+    Exit
+}
+
+Write-Host "This is the OU that will be used: "
+Write-Host $targetOU
+        
     # User does not exist, create new user
     Write-Host "Creating new user for MAC address $mac"
     
@@ -63,7 +114,7 @@ else {
         CannotChangePassword = $true
         AllowReversiblePasswordEncryption = $true
         Enabled = $true
-        Path = $mabUserOU
+        Path = $targetOU
     }
     Write-Host "UserParams set."
 
