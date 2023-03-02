@@ -20,4 +20,6 @@ When executed, the script will:
 - All other groups memberships (ie. Domain users) will be removed from the user object
 - The user object is added to the group matching it's OU (i.e. for device type "Printer", the user object will be created in OU Printer and added to group Printer
 
+MAC users must have the "use reversible encryption" option checked, and the **password matches the username**. This is a security risk when set up incorrect. The script checks the group membership, and only sets the password if the user object is member of the correct "Deny logon group" AD group.
 
+**It is important to install a domain wide group policy to deny logon to this group!** If this is not done, users can use MAC addresses to access the domain.
