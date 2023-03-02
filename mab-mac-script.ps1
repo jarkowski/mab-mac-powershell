@@ -14,7 +14,14 @@ $mabDenyLogonGroup = $config.mabDenyLogonGroup
 
 # Get MAC address from user input and format it
 
+    Write-Host " "
+    Write-Host "Provide a MAC address in any format you like"
+    Write-Host "Special charcters - and : will be removed"
+    Write-Host "All letters will be converted to upper case letters"
+    Write-Host " "
+
 do {
+
     $mac = Read-Host "Please enter MAC address"
     $mac = $mac.Replace("-", "").Replace(":", "").Trim().ToUpper()
     if ($mac -match "^[0-9A-F]{12}$") {
@@ -29,12 +36,12 @@ do {
 $existingUser = Get-ADUser -Filter {Name -like $mac} -SearchBase $mabUserOU -ErrorAction SilentlyContinue
 if ($existingUser) {
     # User already exists
-    $delete = Read-Host "User already exists. Do you want to delete it? (Y/N)"
+    $delete = Read-Host "$mac already exists. Do you want to delete the user object from active directory? (Y/N)"
     if ($delete -eq "Y") {
         Remove-ADUser -Identity $existingUser -Confirm:$false
-        Write-Host "User deleted"
+        Write-Host "User deleted from active directory"
     } else {
-        Write-Host "User not deleted"
+        Write-Host "User not deleted - No changes made."
     }
 } else {
     # User does not exist, create new user
@@ -91,5 +98,4 @@ if ($existingUser) {
     Write-Host "Error: PrimaryGroup does not match, stopping"
     Exit
     }
-
 }
