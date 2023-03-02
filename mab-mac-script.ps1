@@ -143,5 +143,36 @@ Write-Host $targetOU
 
     # Set description for new user
     Set-ADUser -Identity $mac -Description $description
+
+
+    # Retrieve a list of groups the user is a member of
+    $groups = Get-ADPrincipalGroupMembership -Identity $mac
+
+    # Remove all groups except for the MAB Deny Logon group
+    foreach ($group in $groups) {
+
+    if ($group.ToString() -ne $mabDenyLogonGroup.ToString()) {
+        Write-Host "Removing Group: $group"
+        Remove-ADPrincipalGroupMembership -Identity $mac -MemberOf $group -Confirm:$false
+
+    } else {}
+}
+
+#Verify the the user is only member in $mabDenyLogonGroup
+
+# Retrieve a list of groups the user is a member of
+$groups = Get-ADPrincipalGroupMembership -Identity $mac
+
+# Check if the user is only a member of the MAB Deny Logon group
+
+$numberOfGroups = @($groups).Count
+$shouldBeGroup = $groups.ToString()
+$shouldBeGroupTarget = $mabDenyLogonGroup.ToString()
+
+if (($numberOfGroups -eq 1) -and ($shouldBeGroup -eq $shouldBeGroupTarget )) {
+    Write-Host "Test Passed: User $mac is only a member of the $mabDenyLogonGroup group"
+} else {
+    Write-Host "Test Failed: User $mac is a member of other groups in addition to $mabDenyLogonGroup"
+}
 }
 Write-Host "End of script"
