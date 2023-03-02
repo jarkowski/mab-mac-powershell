@@ -156,5 +156,11 @@ Write-Host $targetOU
     Write-Host "Setting matching mpassword to: $mac"
     $newPassword = (ConvertTo-SecureString -String $mac -AsPlainText -Force)
     Set-ADAccountPassword -Identity $mac -NewPassword (ConvertTo-SecureString -String $mac -AsPlainText -Force) -Reset
+
+    # Prompt user for a description
+    $description = Read-Host "Please enter a description for the user"
+
+    # Set description for new user
+    Set-ADUser -Identity $mac -Description $description
 }
 Write-Host "End of script"
