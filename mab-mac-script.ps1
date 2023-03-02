@@ -186,7 +186,12 @@ else {
     # Add the matching group. We use $selectedOU here, the OU the user
     # entered, which should also work for group creating, as OU names
     # and group names are the same
+    try {
     Add-ADGroupMember -Identity $selectedOU -Members $mac
-
+    Write-Host "***** Success - user object should be ready *****"
+    }
+    catch {
+    Write-Host "Can't add the needed matching group. Check if OUs and groups are matching."
+    }
 }
 Write-Host "End of script"
