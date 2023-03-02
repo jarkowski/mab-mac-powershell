@@ -73,10 +73,7 @@ if ($existingUser) {
     }
     Write-Host "User creation done."
 
-    # Set password to match username
-    Write-Host "This is the password that will be used: $mac"
-    $newPassword = (ConvertTo-SecureString -String $mac -AsPlainText -Force)
-    Set-ADAccountPassword -Identity $mac -NewPassword (ConvertTo-SecureString -String $mac -AsPlainText -Force) -Reset
+ 
     
     # Add user to MAB-Deny-Logon group
     Add-ADGroupMember -Identity $mabDenyLogonGroup -Members $mac
@@ -88,9 +85,11 @@ if ($existingUser) {
     Write-Host "The Token of group $mabDenyLogonGroup is $primaryGroupToken"
     Set-aduser -identity $mac -Replace @{PrimaryGroupID=$primaryGroupToken}
 
-    # Check for success
+    # Check for success. If the primary group is not set to the DenyLogonGroup,
+    # the script must stop BEFORE setting the password to match the username.
     $user = Get-ADUser -Identity $mac -Properties PrimaryGroupID
-    Write-Host "The users primary group ID is $user.PrimaryGroupID"
+    $id = $user.PrimaryGroupID 
+    Write-Host "The users primary group ID is $id." 
     if ($user.PrimaryGroupID -eq $primaryGroupToken) {
     Write-Host "OK, primary group is set correctly."
     } 
@@ -98,4 +97,11 @@ if ($existingUser) {
     Write-Host "Error: PrimaryGroup does not match, stopping"
     Exit
     }
+
+    # Set password to match username
+
+    Write-Host "Setting matching mpassword to: $mac"
+    $newPassword = (ConvertTo-SecureString -String $mac -AsPlainText -Force)
+    Set-ADAccountPassword -Identity $mac -NewPassword (ConvertTo-SecureString -String $mac -AsPlainText -Force) -Reset
 }
+Write-Host "End of script"
