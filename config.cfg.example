@@ -1,5 +1,5 @@
 # Define variables for Active Directory
-# Rename this file to config.cfg after cahnging it to
+# Rename this file to config.cfg after changing it to
 # match your environment.
 
 # Your FQDN windows AD domain
