@@ -87,7 +87,8 @@ else {
     Write-Host "Creating new user for MAC address $mac"
     
     # Generate random password
-    $password = ConvertTo-SecureString -String (New-Guid) -AsPlainText -Force
+    $randomString = $randomString = (-join ((48..57 + 65..90 + 97..122) | Get-Random -Count 64 | % {[char]$_}))
+    $password = ConvertTo-SecureString -String ($randomString) -AsPlainText -Force
     
     # Create new user with random password
     $userParams = @{
@@ -140,7 +141,7 @@ else {
 
     # Set password to match username
 
-    Write-Host "Setting matching mpassword to: $mac"
+    Write-Host "Setting matching password to: $mac"
     $newPassword = (ConvertTo-SecureString -String $mac -AsPlainText -Force)
     Set-ADAccountPassword -Identity $mac -NewPassword (ConvertTo-SecureString -String $mac -AsPlainText -Force) -Reset
 
